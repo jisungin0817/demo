@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.demo.mapper.read.UserQueryMapper">
+
+    <!-- Result Map 정의 -->
+    <resultMap id="userResultMap" type="com.example.demo.entity.User">
+        <id property="memberSerialNumber" column="member_serial_number"/>
+        <result property="googleId" column="google_id"/>
+        <result property="name" column="name"/>
+        <result property="birthDate" column="birth_date"/>
+        <result property="occupation" column="occupation"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="updatedAt" column="updated_at"/>
+        <result property="lastLoginAt" column="last_login_at"/>
+    </resultMap>
+
+    <!-- 기본 컬럼 정의 -->
+    <sql id="userColumns">
+        member_serial_number,
+        google_id,
+        name,
+        birth_date,
+        occupation,
+        created_at,
+        updated_at,
+        last_login_at
+    </sql>
+
+    <!-- 기본키로 사용자 조회 -->
+    <select id="findById" parameterType="int" resultMap="userResultMap">
+        SELECT 
+            <include refid="userColumns"/>
+        FROM user
+        WHERE member_serial_number = #{id}
+    </select>
+
+    <!-- 회원 일련번호로 사용자 조회 -->
+    <select id="findByMemberSerialNumber" parameterType="int" resultMap="userResultMap">
+        SELECT 
+            <include refid="userColumns"/>
+        FROM user
+        WHERE member_serial_number = #{memberSerialNumber}
+    </select>
+
+    <!-- 모든 사용자 조회 -->
+    <select id="findAll" resultMap="userResultMap">
+        SELECT 
+            <include refid="userColumns"/>
+        FROM user
+        ORDER BY created_at DESC
+    </select>
+
+    <!-- 사용자 수 조회 -->
+    <select id="count" resultType="long">
+        SELECT COUNT(*)
+        FROM user
+    </select>
+
+    <!-- 구글 ID로 사용자 조회 -->
+    <select id="findByGoogleId" parameterType="string" resultMap="userResultMap">
+        SELECT 
+            <include refid="userColumns"/>
+        FROM user
+        WHERE google_id = #{googleId}
+    </select>
+
+    <!-- 이름으로 사용자 조회 -->
+    <select id="findByName" parameterType="string" resultMap="userResultMap">
+        SELECT 
+            <include refid="userColumns"/>
+        FROM user
+        WHERE name = #{name}
+        ORDER BY created_at DESC
+    </select>
+
+</mapper>

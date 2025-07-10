@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<configuration>
+    <!-- MyBatis 전역 설정 -->
+    <settings>
+        <setting name="mapUnderscoreToCamelCase" value="true"/>
+        <setting name="logImpl" value="STDOUT_LOGGING"/>
+    </settings>
+
+    <!-- typeAliases -->
+    <typeAliases>
+        <package name="com.example.demo.entity"/>
+    </typeAliases>
+</configuration>

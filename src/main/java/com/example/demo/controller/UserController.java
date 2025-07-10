@@ -10,15 +10,13 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.bind.annotation.PutMapping;
-import jakarta.validation.Valid;
-import java.time.LocalDate;
 
 @RestController
 @RequestMapping("/api/v1/users")
@@ -31,6 +29,8 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping("/userInfo")
+    
+    //swagger를위함
     @Operation(
         summary = "👤 사용자 정보 조회",
         description = """
@@ -147,8 +147,4 @@ public class UserController {
             return ResponseEntity.internalServerError().build();
         }
     }
-    
-    
-    
-    
 }

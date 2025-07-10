@@ -2,7 +2,9 @@ package com.example.demo.service;
 
 import com.example.demo.dto.UserProfileResponse;
 import com.example.demo.entity.User;
-import com.example.demo.repository.UserRepository;
+import com.example.demo.mapper.read.UserQueryMapper;
+import com.example.demo.mapper.write.UserCommandMapper;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -13,22 +15,22 @@ import java.time.LocalDate;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-@Transactional(readOnly = true)
 public class UserService {
+    
+    private final UserQueryMapper userQueryMapper;
+    private final UserCommandMapper userCommandMapper;
 
-    private final UserRepository userRepository;
-
+    @Transactional(readOnly = true)
     public UserProfileResponse getUserInfo(Integer userId) {
         log.info("사용자 정보 조회 요청 - user_id: {}", userId);
-
-        User user = userRepository.findByMemberSerialNumber(userId)
+        
+        User user = userQueryMapper.findByMemberSerialNumber(userId)
                 .orElseThrow(() -> {
                     log.error("사용자를 찾을 수 없습니다 - user_id: {}", userId);
                     return new RuntimeException("사용자를 찾을 수 없습니다");
                 });
-
+        
         log.info("사용자 정보 조회 성공 - user_id: {}", userId);
-
         return UserProfileResponse.builder()
                 .memberSerialNumber(user.getMemberSerialNumber())
                 .googleId(user.getGoogleId())
@@ -41,32 +43,37 @@ public class UserService {
                 .build();
     }
 
- // ✅ 생년월일 수정 메서드 (수정된 정보 반환하도록 변경)
     @Transactional
     public UserProfileResponse updateUserBirthDate(Integer userId, String birthDate) {
         log.info("생년월일 수정 요청 - user_id: {}, birth_date: {}", userId, birthDate);
-
-        User user = userRepository.findByMemberSerialNumber(userId)
+        
+        // 1. 사용자 존재 확인 (Query 데이터소스에서 조회)
+        User user = userQueryMapper.findByMemberSerialNumber(userId)
             .orElseThrow(() -> {
                 log.error("사용자를 찾을 수 없습니다 - user_id: {}", userId);
                 return new RuntimeException("사용자를 찾을 수 없습니다");
             });
-
-        user.setBirthDate(LocalDate.parse(birthDate)); // yyyy-MM-dd 형식
-        User savedUser = userRepository.save(user);
-
+        
+        // 2. 생년월일 업데이트 (Command 데이터소스에서 수정)
+        int updateResult = userCommandMapper.updateUserBirthDate(userId, birthDate);
+        
+        if (updateResult == 0) {
+            log.error("생년월일 수정 실패 - user_id: {}", userId);
+            throw new RuntimeException("생년월일 수정에 실패했습니다");
+        }
+        
         log.info("생년월일 수정 완료 - user_id: {}, 변경된 birth_date: {}", userId, birthDate);
         
-        // 수정된 사용자 정보 반환
+        // 3. 수정된 사용자 정보 반환 (업데이트된 정보로 응답 생성)
         return UserProfileResponse.builder()
-            .memberSerialNumber(savedUser.getMemberSerialNumber())
-            .googleId(savedUser.getGoogleId())
-            .name(savedUser.getName())
-            .birthDate(savedUser.getBirthDate())
-            .occupation(savedUser.getOccupation())
-            .createdAt(savedUser.getCreatedAt())
-            .updatedAt(savedUser.getUpdatedAt())
-            .lastLoginAt(savedUser.getLastLoginAt())
+            .memberSerialNumber(user.getMemberSerialNumber())
+            .googleId(user.getGoogleId())
+            .name(user.getName())
+            .birthDate(LocalDate.parse(birthDate)) // 수정된 생년월일
+            .occupation(user.getOccupation())
+            .createdAt(user.getCreatedAt())
+            .updatedAt(user.getUpdatedAt()) // 실제로는 DB에서 CURRENT_TIMESTAMP로 업데이트됨
+            .lastLoginAt(user.getLastLoginAt())
             .build();
     }
 }
