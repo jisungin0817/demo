@@ -76,4 +76,37 @@ public class UserService {
             .lastLoginAt(user.getLastLoginAt())
             .build();
     }
+    
+    /**
+     * 사용자 삭제
+     * @param userId 사용자 ID
+     */
+    @Transactional
+    public void deleteUser(Integer userId) {
+        log.info("사용자 삭제 요청 - user_id: {}", userId);
+
+        // 1. 사용자 존재 확인 (Query 데이터소스에서 조회)
+        User user = userQueryMapper.findByMemberSerialNumber(userId)
+                .orElseThrow(() -> {
+                    log.error("사용자를 찾을 수 없습니다 - user_id: {}", userId);
+                    return new RuntimeException("사용자를 찾을 수 없습니다");
+                });
+
+        // 2. 관련 데이터 삭제 (Command 데이터소스에서 삭제)
+        int deleteUserCount     = userCommandMapper.deleteUser(userId);
+        int deleteGoalCount     = userCommandMapper.goalDelete(userId);
+        int deleteMissionCount  = userCommandMapper.missionHisDelete(userId);
+        int deleteChatCount     = userCommandMapper.chatHisDelete(userId);
+
+        int deleteResult = deleteUserCount + deleteGoalCount + deleteMissionCount + deleteChatCount;
+
+        // 삭제 실패 시 (주 테이블인 사용자 삭제가 실패했거나 모든 삭제가 0이면 실패로 간주)
+        if (deleteUserCount == 0) {
+            log.error("사용자 삭제 실패 - user_id: {}", userId);
+            throw new RuntimeException("사용자 삭제에 실패했습니다");
+        }
+
+        log.info("사용자 삭제 완료 - user_id: {}, 삭제 건수: {}", userId, deleteResult);
+    }
+    
 }

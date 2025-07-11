@@ -60,4 +60,24 @@
         WHERE member_serial_number = #{userId}
     </update>
 
+ 	<delete id="healthDelete" parameterType="int">
+	     delete from health_service.health_checkup hc 
+		 where member_serial_number = #{userId}
+    </delete>
+ 
+ 	<delete id="goalDelete" parameterType="int">
+		 delete   from goal_service.user_mission_goal 
+		 where member_serial_number = #{userId}
+	</delete>
+
+	<delete id="missionHisDelete" parameterType="int">
+		 delete   from goal_service.mission_completion_history
+		 where member_serial_number = #{userId}
+	</delete>
+
+	<delete id="chatHisDelete" parameterType="int">
+		delete from intelligence_service.chat_message 
+		where member_serial_number = #{userId}
+	</delete>
+
 </mapper>

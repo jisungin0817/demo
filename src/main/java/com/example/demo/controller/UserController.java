@@ -147,4 +147,55 @@ public class UserController {
             return ResponseEntity.internalServerError().build();
         }
     }
+    
+    @DeleteMapping("/{userId}")
+    @Operation(
+        summary = "🗑️ 사용자 삭제",
+        description = """
+        사용자를 삭제합니다.
+        
+        **처리 과정:**
+        1. 사용자 ID로 기존 사용자 정보 확인
+        2. 사용자 데이터 삭제
+        3. 삭제 성공 응답 반환
+        
+        **주의사항:**
+        - 삭제된 사용자 정보는 복구할 수 없습니다
+        - 관련된 모든 데이터가 함께 삭제됩니다
+        """
+    )
+    @ApiResponses(value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "삭제 성공"
+        ),
+        @ApiResponse(
+            responseCode = "404",
+            description = "사용자를 찾을 수 없습니다"
+        ),
+        @ApiResponse(
+            responseCode = "400",
+            description = "잘못된 요청"
+        )
+    })
+    public ResponseEntity<Void> deleteUser(
+        @Parameter(description = "삭제할 사용자 ID", required = true, example = "1")
+        @PathVariable("userId") 
+        @Min(value = 1, message = "사용자 ID는 1 이상이어야 합니다") 
+        Integer userId
+    ) {
+        log.info("사용자 삭제 API 호출 - user_id: {}", userId);
+        
+        try {
+            userService.deleteUser(userId);
+            log.info("사용자 삭제 성공 - user_id: {}", userId);
+            return ResponseEntity.ok().build();
+        } catch (RuntimeException e) {
+            log.error("사용자 삭제 실패 - user_id: {}, error: {}", userId, e.getMessage());
+            return ResponseEntity.notFound().build();
+        } catch (Exception e) {
+            log.error("사용자 삭제 중 예상치 못한 오류 발생 - user_id: {}", userId, e);
+            return ResponseEntity.internalServerError().build();
+        }
+    }
 }

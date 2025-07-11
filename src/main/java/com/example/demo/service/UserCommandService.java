@@ -33,4 +33,32 @@ public class UserCommandService {
     public int updateLastLoginAt(Integer userId) {
         return userCommandMapper.updateLastLoginAt(userId);
     }
+    
+    /**
+     * 사용자 목표 데이터만 삭제
+     * @param userId 사용자 ID
+     * @return 삭제된 행 수
+     */
+    public int deleteUserGoals(Integer userId) {
+        return userCommandMapper.goalDelete(userId);
+    }
+    
+    /**
+     * 사용자 미션 이력 데이터만 삭제
+     * @param userId 사용자 ID
+     * @return 삭제된 행 수
+     */
+    public int deleteUserMissionHistory(Integer userId) {
+        return userCommandMapper.missionHisDelete(userId);
+    }
+    
+    /**
+     * 사용자 채팅 이력 데이터만 삭제
+     * @param userId 사용자 ID
+     * @return 삭제된 행 수
+     */
+    public int deleteUserChatHistory(Integer userId) {
+        return userCommandMapper.chatHisDelete(userId);
+    }
+    
 }
