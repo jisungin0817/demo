@@ -25,9 +25,13 @@ public interface UserCommandMapper {
     int updateLastLoginAt(@Param("userId") Integer userId);
     
     //관련테이블 데이터 삭제
+    int deleteMissionCompletionHistory(Integer userId);
+    
     int goalDelete(Integer userId);
     
     int missionHisDelete(Integer userId);
     
     int chatHisDelete(Integer userId);
+    
+    int healthDelete(Integer userId);
 }

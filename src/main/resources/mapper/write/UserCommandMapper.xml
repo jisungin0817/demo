@@ -5,16 +5,16 @@
 
     <!-- 사용자 정보 수정 (생년월일) -->
     <update id="updateUserBirthDate">
-        UPDATE user 
+        UPDATE user_service.user 
         SET 
-            birth_date = #{birthDate},
+            birth_date = CAST(#{birthDate} AS DATE),
             updated_at = NOW()
         WHERE member_serial_number = #{userId}
     </update>
 
     <!-- 사용자 삽입 -->
     <insert id="insertUser" parameterType="com.example.demo.entity.User" useGeneratedKeys="true" keyProperty="memberSerialNumber">
-        INSERT INTO user (
+        INSERT INTO user_service.user (
             google_id,
             name,
             birth_date,
@@ -35,36 +35,36 @@
 
     <!-- 사용자 완전 업데이트 -->
     <update id="updateUser" parameterType="com.example.demo.entity.User">
-        UPDATE user 
+        UPDATE user_service.user 
         SET 
             google_id = #{googleId},
             name = #{name},
-            birth_date = #{birthDate},
+            birth_date = CAST(#{birthDate} AS DATE),
             occupation = #{occupation},
             updated_at = NOW()
         WHERE member_serial_number = #{memberSerialNumber}
     </update>
 
-    <!-- 사용자 삭제 -->
-    <delete id="deleteUser" parameterType="int">
-        DELETE FROM user 
-        WHERE member_serial_number = #{userId}
-    </delete>
-
     <!-- 마지막 로그인 시간 업데이트 -->
     <update id="updateLastLoginAt" parameterType="int">
-        UPDATE user 
+        UPDATE user_service.user 
         SET 
             last_login_at = NOW(),
             updated_at = NOW()
         WHERE member_serial_number = #{userId}
     </update>
 
- 	<delete id="healthDelete" parameterType="int">
-	     delete from health_service.health_checkup hc 
-		 where member_serial_number = #{userId}
+	<!-- 사용자 삭제 -->
+    <delete id="deleteUser" parameterType="int">
+        DELETE FROM user_service.user 
+        WHERE member_serial_number = #{userId}
     </delete>
- 
+    
+ 	<delete id="deleteMissionCompletionHistory">
+	     DELETE FROM goal_service.mission_completion_history
+    	 WHERE member_serial_number = #{userId}
+	</delete>
+
  	<delete id="goalDelete" parameterType="int">
 		 delete   from goal_service.user_mission_goal 
 		 where member_serial_number = #{userId}
@@ -80,4 +80,8 @@
 		where member_serial_number = #{userId}
 	</delete>
 
+	<delete id="healthDelete" parameterType="int">
+	     delete from health_service.health_checkup hc 
+		 where member_serial_number = #{userId}
+    </delete>
 </mapper>

@@ -31,7 +31,7 @@
     <select id="findById" parameterType="int" resultMap="userResultMap">
         SELECT 
             <include refid="userColumns"/>
-        FROM user
+        FROM user_service.user
         WHERE member_serial_number = #{id}
     </select>
 
@@ -39,7 +39,7 @@
     <select id="findByMemberSerialNumber" parameterType="int" resultMap="userResultMap">
         SELECT 
             <include refid="userColumns"/>
-        FROM user
+        FROM user_service.user
         WHERE member_serial_number = #{memberSerialNumber}
     </select>
 
@@ -47,21 +47,21 @@
     <select id="findAll" resultMap="userResultMap">
         SELECT 
             <include refid="userColumns"/>
-        FROM user
+        FROM user_service.user
         ORDER BY created_at DESC
     </select>
 
     <!-- 사용자 수 조회 -->
     <select id="count" resultType="long">
         SELECT COUNT(*)
-        FROM user
+        FROM user_service.user
     </select>
 
     <!-- 구글 ID로 사용자 조회 -->
     <select id="findByGoogleId" parameterType="string" resultMap="userResultMap">
         SELECT 
             <include refid="userColumns"/>
-        FROM user
+        FROM user_service.user
         WHERE google_id = #{googleId}
     </select>
 
@@ -69,7 +69,7 @@
     <select id="findByName" parameterType="string" resultMap="userResultMap">
         SELECT 
             <include refid="userColumns"/>
-        FROM user
+        FROM user_service.user
         WHERE name = #{name}
         ORDER BY created_at DESC
     </select>

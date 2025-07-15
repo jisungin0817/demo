@@ -48,6 +48,15 @@ public class UserCommandService {
      * @param userId 사용자 ID
      * @return 삭제된 행 수
      */
+    public int deleteMissionCompletionHistory(Integer userId) {
+        return userCommandMapper.missionHisDelete(userId);
+    }
+    
+    /**
+     * 사용자 미션 이력 데이터만 삭제
+     * @param userId 사용자 ID
+     * @return 삭제된 행 수
+     */
     public int deleteUserMissionHistory(Integer userId) {
         return userCommandMapper.missionHisDelete(userId);
     }
@@ -57,8 +66,17 @@ public class UserCommandService {
      * @param userId 사용자 ID
      * @return 삭제된 행 수
      */
-    public int deleteUserChatHistory(Integer userId) {
+    public int chatHisDelete(Integer userId) {
         return userCommandMapper.chatHisDelete(userId);
+    }
+    
+    /**
+     * 사용자 채팅 이력 데이터만 삭제
+     * @param userId 사용자 ID
+     * @return 삭제된 행 수
+     */
+    public int healthDelete(Integer userId) {
+        return userCommandMapper.healthDelete(userId);
     }
     
 }

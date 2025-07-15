@@ -93,12 +93,16 @@ public class UserService {
                 });
 
         // 2. 관련 데이터 삭제 (Command 데이터소스에서 삭제)
-        int deleteUserCount     = userCommandMapper.deleteUser(userId);
+        int deleteMissionCompletionHistory = userCommandMapper.deleteMissionCompletionHistory(userId);
         int deleteGoalCount     = userCommandMapper.goalDelete(userId);
         int deleteMissionCount  = userCommandMapper.missionHisDelete(userId);
         int deleteChatCount     = userCommandMapper.chatHisDelete(userId);
-
-        int deleteResult = deleteUserCount + deleteGoalCount + deleteMissionCount + deleteChatCount;
+        int deletehealth     = userCommandMapper.healthDelete(userId);
+        
+        //그리고 user삭제
+        int deleteUserCount     = userCommandMapper.deleteUser(userId);
+        
+        int deleteResult = deleteMissionCompletionHistory + deleteUserCount + deleteGoalCount + deleteMissionCount + deleteChatCount + deletehealth;
 
         // 삭제 실패 시 (주 테이블인 사용자 삭제가 실패했거나 모든 삭제가 0이면 실패로 간주)
         if (deleteUserCount == 0) {
